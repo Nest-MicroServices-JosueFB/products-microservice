@@ -13,22 +13,27 @@ async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
-      transport: Transport.TCP,
+      // transport: Transport.TCP,
+      transport: Transport.NATS,
       options: {
-        port: envs.port
+        // host: '0.0.0.0',
+        // ?If docker container, name of container
+        // host: products,
+        // port: envs.port
+        servers: envs.natsServers
       }
     }
   );
 
   app.useGlobalPipes(
     new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
     })
   );
 
   // app.startAllMicroservices()
-  // await app.listen(envs.port);
+  await app.listen();
   // logger.log(`App running on port ${envs.port}`);
   logger.log(`Products Microservice running on port ${envs.port}`);
 
